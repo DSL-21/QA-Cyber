@@ -38,11 +38,38 @@ public class SQLInjectionTest {
 		System.out.println("🧪 Spuštěn SQL Injection test");
 
 		// Seznam běžných SQLi payloadů pro testování
-		String[] sqlPayloads = { "' OR '1'='1", "' OR 1=1 --", "' OR '1'='1' --", "' OR 1=1#", "' OR 1=1/*",
-				"' OR '' = '", "' OR 1=1 LIMIT 1 OFFSET 1 --", "' OR EXISTS(SELECT * FROM users) --",
-				"' OR (SELECT COUNT(*) FROM users) > 0 --", "' OR sleep(2)--", "admin' --", "' OR 'x'='x",
-				"' OR 'x'='x'--", "' or ''='", "'='", "1'1", "' OR 1=1 ORDER BY 1--", "\" OR \"1\"=\"1",
-				"' OR 1=CONVERT(int, '1')--" };
+		String[] sqlPayloads = {
+				// Základní bypassy
+				"' OR '1'='1", "' OR 1=1 --", "' OR '1'='1' --", "' OR 1=1#", "' OR 1=1/*", "' OR ''='", "admin' --",
+				"' OR 'x'='x", "' or ''='", "'='", "1'1", "' OR 'test'='test", "' OR 1=1 ORDER BY 1--",
+				"\" OR \"1\"=\"1", "' OR 1=CONVERT(int, '1')--",
+
+				// Kombinace logických výrazů
+				"' OR 1=1 AND ''='", "' OR 1=1 AND 'a'='a", "' OR 1=1 AND 1=1--", "' OR 1=1 AND sleep(2)--",
+				"' AND 1=0 UNION SELECT NULL--",
+
+				// Union selecty (pokročilejší útoky)
+				"' UNION SELECT null, null, null--", "' UNION SELECT 1, 'admin', 'password'--",
+				"' UNION SELECT username, password FROM users--", "' UNION SELECT 1,2,3,4--",
+				"' UNION SELECT version(), database()--",
+
+				// Time-based testy
+				"' OR SLEEP(5)--", "' WAITFOR DELAY '0:0:5'--", "' AND (SELECT * FROM users) = '1' AND SLEEP(3)--",
+
+				// Nested subqueries
+				"' OR (SELECT COUNT(*) FROM users) > 0 --",
+				"' AND (SELECT 1 FROM dual WHERE EXISTS (SELECT * FROM users))--",
+				"' AND (SELECT 1 FROM information_schema.tables)--",
+
+				// Obfuskace (zakódované varianty)
+				"%27%20OR%20%271%27%3D%271", "%27%20OR%20%271%27%3D%271%27--", "%27%20OR%20%271%27%3D%271%27%23",
+
+				// Přetížení SQL parseru
+				"'; EXEC xp_cmdshell('dir'); --", "' AND 1=(SELECT COUNT(*) FROM tabname); --",
+				"' OR 1 GROUP BY CONCAT(username, ':', password) --",
+
+				// Trolly / edge case
+				"'||(SELECT '')||'", "'/**/OR/**/'1'='1", "' OR true--" };
 
 		int maxAttempts = sqlPayloads.length;
 
