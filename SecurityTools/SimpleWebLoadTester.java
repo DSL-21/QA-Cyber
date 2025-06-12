@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URI; // Nový import pro URI
+import java.net.URI;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,98 +13,92 @@ public class SimpleWebLoadTester {
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 
-		// *** VELMI DŮLEŽITÉ ETIKEcké UPOZORNĚNÍ ***
-		System.out.println("**********************************************************************************");
-		System.out.println("!!! UPOZORNĚNÍ: Toto je nástroj pro vzdělávací a demonstrativní účely !!!");
-		System.out.println("!!! NIKDY NEPOUŽÍVEJTE tento kód pro neoprávněné zátěžové testování nebo DDoS útoky !!!");
-		System.out.println("!!! Neoprávněné použití je NELEGÁLNÍ a může vést k VÁŽNÝM PRÁVNÍM DŮSLEDKŮM !!!");
-		System.out.println("!!! Testujte POUZE na systémech, k nimž máte VÝSLOVNÉ, PÍSEMNÉ POVOLENÍ od vlastníka. !!!");
-		System.out.println("**********************************************************************************\n");
+		// ASCII art logo for console output.
+		String asciiArt = "  ____  ____  __    _  _  _  _  ____ \n" + " (    \\(  __)(  )  / )( \\( \\/ )(  __)\n"
+				+ "  ) D ( ) _) / (_/\\) \\/ ( )  (  ) _) \n" + " (____/(____)\\____/\\____/(_/\\_)(____)\n"
+				+ "***************************************\n" + "* Copyright 2025, ★DSL★ 	      *\n"
+				+ "* https://github.com/DSL-21   	      *\n" + "***************************************";
+		System.out.println(asciiArt);
 
-		System.out.println("--- Jednoduchý Webový Zátěžový Tester ---");
-		System.out.println("Zadejte cílovou URL (např. http://localhost:8080/):");
+		System.out.println("--- Simple Web Load Tester ---");
+		System.out.println("Enter the target URL (e.g., http://localhost:8080/):");
 		String targetUrl = scanner.nextLine();
 
-		System.out.println("Zadejte počet požadavků, které chcete odeslat (např. 100):");
+		System.out.println("Enter the number of requests to send (e.g., 100):");
 		int numRequests = 0;
 		try {
 			numRequests = Integer.parseInt(scanner.nextLine());
 			if (numRequests <= 0) {
-				System.out.println("Počet požadavků musí být kladné číslo. Používám výchozí 10.");
+				System.out.println("Number of requests must be positive. Using default 10.");
 				numRequests = 10;
 			}
 		} catch (NumberFormatException e) {
-			System.out.println("Neplatný počet. Používám výchozí 10.");
+			System.out.println("Invalid number. Using default 10.");
 			numRequests = 10;
 		}
 
-		System.out
-				.println("Zadejte zpoždění mezi požadavky v milisekundách (např. 50 pro 50ms, 0 pro žádné zpoždění):");
+		System.out.println("Enter delay between requests in milliseconds (e.g., 50 for 50ms, 0 for no delay):");
 		int delayMs = 0;
 		try {
 			delayMs = Integer.parseInt(scanner.nextLine());
 			if (delayMs < 0)
 				delayMs = 0;
 		} catch (NumberFormatException e) {
-			System.out.println("Neplatné zpoždění. Používám výchozí 0ms.");
+			System.out.println("Invalid delay. Using default 0ms.");
 			delayMs = 0;
 		}
 
-		System.out.println("\nSpouštím zátěžový test na " + targetUrl + " s " + numRequests + " požadavky...");
+		System.out.println("\nStarting load test on " + targetUrl + " with " + numRequests + " requests...");
 
 		long startTime = System.currentTimeMillis();
-		AtomicInteger successCount = new AtomicInteger(0);
-		AtomicInteger failCount = new AtomicInteger(0);
+		AtomicInteger successCount = new AtomicInteger(0); // Counter for successful responses.
+		AtomicInteger failCount = new AtomicInteger(0); // Counter for failed responses.
 
 		for (int i = 0; i < numRequests; i++) {
-			System.out.print("Odesílám požadavek #" + (i + 1) + "... ");
-			HttpURLConnection connection = null; // Deklarujeme mimo try, aby bylo viditelné ve finally
+			System.out.print("Sending request #" + (i + 1) + "... ");
+			HttpURLConnection connection = null; // Declare connection outside try for finally block.
 
 			try {
-				// Řešení pro "The constructor URL(String) is deprecated"
-				// Nejdříve vytvoříme URI, pak ho převedeme na URL
+				// Create URL from URI to handle deprecated URL constructor.
 				URI uri = new URI(targetUrl);
 				URL url = uri.toURL();
 
 				connection = (HttpURLConnection) url.openConnection();
 				connection.setRequestMethod("GET");
-				connection.setConnectTimeout(5000); // 5 sekund timeout pro připojení
-				connection.setReadTimeout(5000); // 5 sekund timeout pro čtení
+				connection.setConnectTimeout(5000); // 5-second connection timeout.
+				connection.setReadTimeout(5000); // 5-second read timeout.
 
 				int responseCode = connection.getResponseCode();
 				System.out.println("Status: " + responseCode);
 
+				// Check if response code indicates success (2xx).
 				if (responseCode >= 200 && responseCode < 300) {
 					successCount.incrementAndGet();
 				} else {
 					failCount.incrementAndGet();
 				}
 
-				// Řešení pro "The value of the local variable line is not used"
-				// Přečteme celý obsah odpovědi do StringBuideru a pak ho můžeme např. zahodit
-				// nebo vypsat pro debug
+				// Read and discard response body (or process for debugging).
 				try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
 					StringBuilder responseBody = new StringBuilder();
 					String line;
 					while ((line = in.readLine()) != null) {
-						responseBody.append(line); // Nyní je 'line' použita pro sestavení responseBody
+						responseBody.append(line);
 					}
-					// Pokud nechceš vypisovat celý body, můžeš ho prostě zahodit po přečtení.
-					// Např. System.out.println("Response body length: " + responseBody.length());
-					// // Pro debug
 				} catch (Exception e) {
-					// Ignorujeme chyby při čtení, pokud spojení uspělo
+					// Ignore errors if connection succeeded but reading response failed.
 				}
 
+				// Apply delay if specified.
 				if (delayMs > 0) {
-					Thread.sleep(delayMs); // Zpoždění mezi požadavky
+					Thread.sleep(delayMs);
 				}
 
 			} catch (Exception e) {
-				System.err.println("❌ Chyba při požadavku #" + (i + 1) + ": " + e.getMessage());
+				System.err.println("❌ Error during request #" + (i + 1) + ": " + e.getMessage());
 				failCount.incrementAndGet();
 			} finally {
-				// Ujistíme se, že se připojení vždy uzavře
+				// Ensure the connection is always closed.
 				if (connection != null) {
 					connection.disconnect();
 				}
@@ -114,11 +108,11 @@ public class SimpleWebLoadTester {
 		long endTime = System.currentTimeMillis();
 		long totalDurationSeconds = (endTime - startTime) / 1000;
 
-		System.out.println("\n--- Zátěžový test dokončen ---");
-		System.out.println("Odesláno požadavků: " + numRequests);
-		System.out.println("Úspěšné odpovědi (2xx): " + successCount.get());
-		System.out.println("Chybové odpovědi / Neúspěšné: " + failCount.get());
-		System.out.println("Celkový čas trvání: " + totalDurationSeconds + " sekund.");
+		System.out.println("\n--- Load Test Completed ---");
+		System.out.println("Requests sent: " + numRequests);
+		System.out.println("Successful responses (2xx): " + successCount.get());
+		System.out.println("Error responses / Failed: " + failCount.get());
+		System.out.println("Total duration: " + totalDurationSeconds + " seconds.");
 
 		scanner.close();
 	}
