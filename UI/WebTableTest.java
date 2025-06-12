@@ -14,9 +14,13 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class WebTableTest {
 
-	public static String browser = "Chrome"; // nebo "Edge"
+	// Browser to use for testing (Chrome by default, can be Edge).
+	public static String browser = "Chrome";
+
+	// WebDriver instance to control the browser.
 	public static WebDriver driver;
 
+	// Sets up and initializes the chosen web browser.
 	public static void setUpDriver() {
 		if (browser.equalsIgnoreCase("Edge")) {
 			WebDriverManager.edgedriver().setup();
@@ -28,89 +32,103 @@ public class WebTableTest {
 		driver.manage().window().maximize();
 	}
 
+	// Pauses execution for a specified number of seconds.
 	public static void pause(int seconds) {
 		try {
 			Thread.sleep(seconds * 1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+			Thread.currentThread().interrupt();
 		}
 	}
 
 	public static void main(String[] args) {
+		// Initialize the browser.
 		setUpDriver();
+
+		// Set up an explicit wait for elements to appear, with a 10-second timeout.
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		System.out.println("🧪 Spuštěn test webové tabulky na w3schools.com");
+		System.out.println("🧪 Starting web table test on w3schools.com");
 
 		String tableUrl = "https://www.w3schools.com/html/html_tables.asp";
 
 		try {
+			// Navigate to the page with the table.
 			driver.get(tableUrl);
 
-			// Počkej na načtení tabulky
+			// Wait for the table to be visible on the page.
 			WebElement table = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("customers")));
-			System.out.println("✅ Tabulka nalezena.");
+			System.out.println("✅ Table found.");
 
-			// Získání všech řádků tabulky (kromě hlavičky)
-			List<WebElement> rows = table.findElements(By.xpath(".//tr")); // Najde všechny <tr> v tabulce
-			System.out.println("Nalezeno " + (rows.size() - 1) + " datových řádků (bez hlavičky)."); // odečteme
-																										// hlavičku
+			// Get all rows from the table (including the header row).
+			List<WebElement> rows = table.findElements(By.xpath(".//tr"));
+			System.out.println("Found " + (rows.size() - 1) + " data rows (excluding header).");
 
-			// Ověření konkrétní buňky - například, že 'Alfreds Futterkiste' má 'Germany'
-			// jako zemi
-			System.out.println("\n--- Ověření konkrétní buňky ---");
+			// --- Verify a specific cell's content ---
+			System.out.println("\n--- Verifying Specific Cell ---");
 			String expectedCompany = "Alfreds Futterkiste";
 			String expectedCountry = "Germany";
 			boolean found = false;
 
-			// Iterace přes řádky (začínáme od indexu 1, abychom přeskočili hlavičku)
+			// Iterate through table rows, starting from index 1 to skip the header.
 			for (int i = 1; i < rows.size(); i++) {
 				WebElement row = rows.get(i);
-				List<WebElement> cells = row.findElements(By.tagName("td")); // Získá všechny <td> (buňky) v daném řádku
+				// Get all cell elements (<td>) within the current row.
+				List<WebElement> cells = row.findElements(By.tagName("td"));
 
-				// Zkontroluj, zda je alespoň 3 buňky (Společnost, Kontakt, Země)
+				// Check if there are enough cells (at least 3 for Company, Contact, Country).
 				if (cells.size() >= 3) {
-					String company = cells.get(0).getText(); // První buňka (index 0) = Společnost
-					String country = cells.get(2).getText(); // Třetí buňka (index 2) = Země
+					String company = cells.get(0).getText(); // Get text from the first cell (Company).
+					String country = cells.get(2).getText(); // Get text from the third cell (Country).
 
+					// Compare cell contents with expected values.
 					if (company.equals(expectedCompany) && country.equals(expectedCountry)) {
 						System.out.println(
-								"✅ Nalezeno: Společnost '" + company + "' a země '" + country + "' jsou správné.");
+								"✅ Found: Company '" + company + "' and country '" + country + "' are correct.");
 						found = true;
-						break; // Našli jsme, co jsme hledali, můžeme skončit
+						break; // Stop iterating once the target row is found.
 					}
 				}
 			}
 
+			// Report if the specific company and country combination was not found.
 			if (!found) {
-				System.out.println("❌ Chyba: Společnost '" + expectedCompany + "' s očekávanou zemí '" + expectedCountry
-						+ "' nebyla nalezena.");
+				System.out.println("❌ Error: Company '" + expectedCompany + "' with expected country '"
+						+ expectedCountry + "' not found.");
 			}
 			pause(2);
 
-			// Příklad: Vypsání obsahu celé tabulky do konzole
-			System.out.println("\n--- Obsah celé tabulky ---");
+			// --- Print the entire table content to console ---
+			System.out.println("\n--- Entire Table Content ---");
+			// Iterate through all rows (including header this time).
 			for (int i = 0; i < rows.size(); i++) {
 				WebElement row = rows.get(i);
-				List<WebElement> cells = row.findElements(By.tagName("td")); // Získá <td> pro data, <th> pro hlavičku
-				if (cells.isEmpty()) { // Může se stát u hlavičky <th>
-					cells = row.findElements(By.tagName("th")); // Pokud to není <td>, zkusí <th>
+				List<WebElement> cells;
+				// Try to find table data cells (<td>). If empty (e.g., for header row), try
+				// table header cells (<th>).
+				cells = row.findElements(By.tagName("td"));
+				if (cells.isEmpty()) {
+					cells = row.findElements(By.tagName("th"));
 				}
 
+				// Print the text of each cell in the row, separated by tabs.
 				for (WebElement cell : cells) {
-					System.out.print(cell.getText() + "\t"); // Vypíše text buňky s tabulátorem
+					System.out.print(cell.getText() + "\t");
 				}
-				System.out.println(); // Nový řádek po každém řádku tabulky
+				System.out.println(); // Move to the next line after each row.
 			}
-			System.out.println("✅ Obsah tabulky vypsán do konzole.");
+			System.out.println("✅ Table content printed to console.");
 			pause(3);
 
 		} catch (Exception e) {
-			System.err.println("🚨 Během testu došlo k chybě: " + e.getMessage());
+			// Catch and report any errors during the test.
+			System.err.println("🚨 An error occurred during the test: " + e.getMessage());
 			e.printStackTrace();
 		} finally {
+			// Ensure the browser is closed even if an error occurs.
 			if (driver != null) {
 				driver.quit();
-				System.out.println("\n🔚 Test webové tabulky dokončen.");
+				System.out.println("\n🔚 Web table test completed.");
 			}
 		}
 	}
