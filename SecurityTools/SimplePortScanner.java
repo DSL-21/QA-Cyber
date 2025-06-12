@@ -4,48 +4,60 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.Scanner; // Pro uživatelský vstup
+import java.util.Scanner; // For user input.
 
 public class SimplePortScanner {
 
 	public static void main(String[] args) {
+		// ASCII art logo for console output.
+		String asciiArt = "  ____  ____  __    _  _  _  _  ____ \n" + " (    \\(  __)(  )  / )( \\( \\/ )(  __)\n"
+				+ "  ) D ( ) _) / (_/\\) \\/ ( )  (  ) _) \n" + " (____/(____)\\____/\\____/(_/\\_)(____)\n"
+				+ "***************************************\n" + "* Copyright 2025, ★DSL★           *\n"
+				+ "* https://github.com/DSL-21           *\n" + "***************************************";
+		System.out.println(asciiArt);
+		System.out.println("--- Simple Port Scanner ---");
+
 		Scanner scanner = new Scanner(System.in);
 
-		System.out.println("Zadejte IP adresu nebo název hostitele pro skenování (např. 127.0.0.1 nebo google.com):");
+		System.out.println("Enter the IP address or hostname to scan (e.g., 127.0.0.1 or google.com):");
 		String host = scanner.nextLine();
 
-		System.out.println("Zadejte počáteční port pro skenování (např. 1):");
+		System.out.println("Enter the starting port for the scan (e.g., 1):");
 		int startPort = scanner.nextInt();
 
-		System.out.println("Zadejte koncový port pro skenování (např. 1024):");
+		System.out.println("Enter the ending port for the scan (e.g., 1024):");
 		int endPort = scanner.nextInt();
 
-		int timeout = 200; // Časový limit pro připojení k portu v milisekundách
+		int timeout = 200; // Connection timeout in milliseconds.
 
-		System.out.println("\nSpouštím skenování portů na " + host + " od " + startPort + " do " + endPort + "...");
+		System.out.println("\nStarting port scan on " + host + " from " + startPort + " to " + endPort + "...");
 
+		// Loop through each port in the specified range.
 		for (int port = startPort; port <= endPort; port++) {
 			try {
-				// Pokus o navázání socketového spojení s portem
+				// Attempt to establish a socket connection to the port.
 				Socket socket = new Socket();
 				socket.connect(new InetSocketAddress(host, port), timeout);
-				socket.close();
-				System.out.println("✅ Port " + port + " je OTEVŘENÝ");
+				socket.close(); // Close the socket if connection is successful.
+				System.out.println("✅ Port " + port + " is OPEN");
 			} catch (SocketTimeoutException e) {
-				// System.out.println("Port " + port + " je FILTROVANÝ (timeout)"); // Můžete
-				// odkomentovat pro detailnější log
+				// Port is filtered/timed out. (Commented out for cleaner output).
+				// System.out.println("Port " + port + " is FILTERED (timeout)");
 			} catch (IOException e) {
-				// System.out.println("Port " + port + " je ZAVŘENÝ nebo CHYBA: " +
-				// e.getMessage()); // Můžete odkomentovat
+				// Port is closed or another IO error occurred. (Commented out).
+				// System.out.println("Port " + port + " is CLOSED or ERROR: " +
+				// e.getMessage());
 			} catch (SecurityException e) {
+				// Handle security manager issues (e.g., insufficient permissions).
 				System.out
-						.println("❌ Port " + port + " - Chyba zabezpečení (nedostatečná oprávnění): " + e.getMessage());
+						.println("❌ Port " + port + " - Security error (insufficient permissions): " + e.getMessage());
 			} catch (IllegalArgumentException e) {
-				System.out.println("❌ Chyba: Neplatný port " + port + ": " + e.getMessage());
+				// Handle invalid port numbers.
+				System.out.println("❌ Error: Invalid port " + port + ": " + e.getMessage());
 			}
 		}
 
-		System.out.println("\nSkener portů dokončen.");
-		scanner.close();
+		System.out.println("\nPort scan completed.");
+		scanner.close(); // Close the scanner.
 	}
 }
