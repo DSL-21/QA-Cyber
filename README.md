@@ -1,46 +1,34 @@
-# 🛡️ Ethical Web Pentesting with Selenium
+# 🛡️ QA & Ethical Testing Practice
 
-This repository is a growing personal portfolio focused on ethical web automation and security testing using Selenium WebDriver in Java.  
-It combines practical experience in UI interaction, vulnerability exploration, and test logic — built step by step with discipline and curiosity.
-
----
-
-## 📚 What You'll Find
-
-A collection of self-built automation scripts simulating both functional user flows and edge-case security scenarios — all in a safe, controlled environment.  
-Tests are designed to explore behavior, push boundaries, and reflect real-world challenges testers and defenders face every day.
-
-Whether it's a broken login flow, unsafe DOM manipulation, or missing input validation — each test adds another brick to the wall of experience.
+This is my personal practice space for learning test automation and basic security testing using Selenium.  
+I’m using this project to improve my skills, explore how web applications behave, and test my own understanding step by step.
 
 ---
 
-## 🧰 Tech Stack
+## 🧠 Why I'm Doing This
+
+I believe in learning by doing — trying things out, breaking them (safely), and figuring out how to make them better.  
+This repo helps me grow in QA, automation, and critical thinking.
+
+---
+
+## 🧰 Tools Used
 
 - Java  
 - Selenium WebDriver  
-- ChromeDriver / EdgeDriver  
-- WebDriverManager  
-- (With plans to add JUnit, CI, and reporting tools)
+
+(Planning to expand as I learn more.)
 
 ---
 
-## ⚠️ Usage & Ethics
+## ⚠️ Ethics First
 
-> This project is for **educational and ethical purposes only**.  
-All tests target known demo or intentionally vulnerable sites.  
-Never run such scripts against real-world systems without explicit permission.
-
----
-
-## ✝️ Why This Exists
-
-Breaking something is easy.  
-Understanding **why** it broke — and how to fix it — is a step closer to mastery.  
-This is not just about testing software, but testing self-discipline, patience, and the resolve to build something better.
+All scripts here are for **learning and ethical purposes only**.  
+I never test against real systems without permission — this is all done in safe environments.
 
 ---
 
-## 👤 Author
+## 👤 About Me
 
 Daniel Suk  
-QA in progress • Former soldier • Always learning  
+QA in progress • Self-taught • Former soldier • Always curious
