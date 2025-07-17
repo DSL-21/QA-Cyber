@@ -28,5 +28,5 @@ The goal is to **build skills, not cause harm**.
 
 ---
 
-**👨‍💻 Daniel Suk**  
+**👨‍💻 DSL**  
 QA in progress • Self-taught • Always curious  
