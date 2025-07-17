@@ -1,16 +1,32 @@
-# 🧪 QA & Security Practice Lab
+# 🛡️ QA & Ethical Security Practice Lab
 
-This is my personal testing ground for:
+Welcome to my personal lab where I explore:
 
-- 🔹 QA Automation (Selenium + Java)
-- 🔹 Ethical Hacking Labs (XSS, SQLi, etc.)
-- 🔹 CLI & Network Tools (nmap, traceroute)
-- 🔹 Scripting (Python, Bash, Go – beginner)
+## 🔍 What I'm Practicing
 
-💡 All tests are run in isolated environments using VirtualBox or Termux.  
-⚠️ Always ethical. No real-world targets. Ever.
+- **QA Automation** using Java & Selenium WebDriver  
+- **Security Testing** of web vulnerabilities (XSS, SQLi – in simulations)  
+- **Scripting** with Python, Bash, and basic Go  
+- **Network & OS Tools**: `nmap`, `traceroute`, basic TCP/IP debugging  
+- **Virtualized Labs** via VirtualBox & Termux (Android)
+
+## 🧠 Why This Exists
+
+I believe in *learning by doing* — setting up test environments, breaking things safely, and understanding how systems behave under edge conditions.
+
+This lab helps me grow in:
+- Test automation
+- Web security awareness
+- Command-line fluency
+- Responsible use of tools
+
+## ⚖️ Ethics First
+
+Everything here is for **educational** and **ethical** purposes only.  
+I never target real systems. All tests are run in *isolated lab environments*.  
+The goal is to **build skills, not cause harm**.
 
 ---
 
-👨‍💻 Daniel Suk  
-Curious. Learning by doing. Building skills step by step.
+**👨‍💻 Daniel Suk**  
+QA in progress • Self-taught • Always curious  
